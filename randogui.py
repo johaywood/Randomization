@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkinter import filedialog
 import csv, random
+from openpyxl import Workbook
+from openpyxl import load_workbook
+from openpyxl.styles import Style, PatternFill, Border, Side, Alignment, Protection, Font, Color
 
 class Randomization(tk.Frame):
     def __init__(self,master=None):
@@ -59,18 +62,70 @@ class Randomization(tk.Frame):
         count = 0
         data = []
         header = ["Animal #", "Weight (g)"]
+        endRow = self.totalAnimals.get() + 1
+        headerStyle = Style(font=Font(bold=True),
+                     border=Border(left=Side(border_style='thin',
+                                color='FF000000'),
+                     right=Side(border_style='thin',
+                                color='FF000000'),
+                     top=Side(border_style='thin',
+                              color='FF000000'),
+                     bottom=Side(border_style='thin',
+                                 color='FF000000'),
+                     outline=Side(border_style='thin',
+                                  color='FF000000'),
+                     vertical=Side(border_style='hair',
+                                   color='FF000000'),
+                     horizontal=Side(border_style='hair',
+                                     color='FF000000')),
+                     alignment=Alignment(horizontal='center',
+                                         vertical='center'))
+        columnStyle = Style(border=Border(left=Side(border_style='thin',
+                                color='FF000000'),
+                     right=Side(border_style='thin',
+                                color='FF000000'),
+                     top=Side(border_style='thin',
+                              color='FF000000'),
+                     bottom=Side(border_style='thin',
+                                 color='FF000000'),
+                     outline=Side(border_style='thin',
+                                  color='FF000000'),
+                     vertical=Side(border_style='hair',
+                                   color='FF000000'),
+                     horizontal=Side(border_style='hair',
+                                     color='FF000000')),
+                     alignment=Alignment(horizontal='center',
+                            vertical='center'),
+                     number_format='General',
+                     protection=Protection(locked=True,
+                                   hidden='inherit'))
 
         while count < self.totalAnimals.get():
-            data.append([self.startAnimalNum.get() + count, ''])
+            data.append(self.startAnimalNum.get() + count)
             count += 1
 
         random.shuffle(data)
-       
-        with open(self.randoFilepath + '//%s Randomization.csv' % self.studyNumber.get(), 'w', newline='') as fp:   
-            a = csv.writer(fp, delimiter=',')
-            a.writerow(header)
-            a.writerows(data)
-            
+        
+        wb = Workbook()
+        ws = wb.active
+        ws.cell('A1').value = header[0]
+        ws.cell('B1').value = header[1]
+        ws.cell('A1').style = headerStyle
+        ws.cell('B1').style = headerStyle
+        
+        j = 0
+        
+        for i in range(2, self.totalAnimals.get() + 2):
+            ws.cell(row = i, column = 1).value = data[j]
+            j = j + 1
+        
+        for row in ws.iter_rows('A2:B%r' % endRow):
+            for cell in row: 
+                cell.style = columnStyle
+        
+        ws.protection.enable()
+        wb.save(self.randoFilepath + '//%s Randomization.xlsx' % self.studyNumber.get())
+        
         root.destroy()
         
     def outlierCheckType(self):
@@ -98,8 +153,6 @@ class Randomization(tk.Frame):
             b = csv.reader(of, delimiter=',')
             for row in b:
                 self.file_contents.append(row)
-        
-        print(self.file_contents)
         
         lastRow = len(self.file_contents)
         meanCell = len(self.file_contents) + 2
