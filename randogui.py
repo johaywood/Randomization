@@ -1,9 +1,12 @@
 import tkinter as tk
 from tkinter import filedialog
-import csv, random
+import xl, csv, random
+import win32com
 from openpyxl import Workbook
 from openpyxl import load_workbook
 from openpyxl.styles import Style, PatternFill, Border, Side, Alignment, Protection, Font, Color
+from openpyxl.worksheet import Worksheet, header_footer, page, worksheet
+from openpyxl.writer.worksheet import write_worksheet
 
 class Randomization(tk.Frame):
     def __init__(self,master=None):
@@ -108,6 +111,8 @@ class Randomization(tk.Frame):
         
         wb = Workbook()
         ws = wb.active
+        wshf = ws.header_footer
+
         ws.cell('A1').value = header[0]
         ws.cell('B1').value = header[1]
         ws.cell('A1').style = headerStyle
@@ -122,11 +127,31 @@ class Randomization(tk.Frame):
         for row in ws.iter_rows('A2:B%r' % endRow):
             for cell in row: 
                 cell.style = columnStyle
+                
+        wshf.left_header.text = 'Date: _______________'
+        wshf.center_header.text = str(self.studyNumber.get()) + '\rRandomization'
+        wshf.right_header.text = 'Operator: ________________\r________________\r________________\r________________'
+        
+        wshf.left_footer.text = 'Randomized using BRT Randomization\rversion 1.0 \r(Date/Initial) _________________'
+        wshf.center_footer.text = 'Page &P of &N'
+        wshf.right_footer.text = '&[Path]'
+        
+        print(ws)
+    
+        ws.add_print_title(1, rows_or_cols='rows')
+        
+        #ws.PageMargins(left=0.75, right=0.75, top=1.114, bottom=1.416, header=0.5, footer=0.5)
         
         ws.protection.enable()
         wb.save(self.randoFilepath + '//%s Randomization.xlsx' % self.studyNumber.get())
+#        
+#        xl = win32com.client.Dispatch('Excel.application')
+#        wb = xl.Workbooks.Add()
+#        sheet = wb.Sheets(1)
+#        sheet.Name='toto'
+#        xl.ActiveWorkbook.Names.Add(Name='_xlnm.Print_Titles', RefersTo=str(sheet.Name + '$1:$1'))
         
-        root.destroy()
+        #root.destroy()
         
     def outlierCheckType(self):
        
