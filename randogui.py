@@ -112,7 +112,7 @@ class Randomization(tk.Frame):
         wb = Workbook()
         ws = wb.active
         wshf = ws.header_footer
-
+        
         ws.cell('A1').value = header[0]
         ws.cell('B1').value = header[1]
         ws.cell('A1').style = headerStyle
@@ -136,14 +136,14 @@ class Randomization(tk.Frame):
         wshf.center_footer.text = 'Page &P of &N'
         wshf.right_footer.text = '&[Path]'
         
-        print(ws)
-    
-        ws.add_print_title(1, rows_or_cols='rows')
+        wb.create_named_range('_xlnm.Print_Titles', ws, '$1:$1', self)
+        
+        print(wb._named_ranges)
         
         #ws.PageMargins(left=0.75, right=0.75, top=1.114, bottom=1.416, header=0.5, footer=0.5)
         
         ws.protection.enable()
-        wb.save(self.randoFilepath + '//%s Randomization.xlsx' % self.studyNumber.get())
+        wb.save(self.randoFilepath + '//%s Randomization.zip' % self.studyNumber.get())
 #        
 #        xl = win32com.client.Dispatch('Excel.application')
 #        wb = xl.Workbooks.Add()

@@ -1,6 +1,4 @@
-import win32api, win32con, time
-
-import win32com.client as comclt
+import win32api, win32con, time, ctypes
 
 VK_CODE = {'backspace':0x08,
            'tab':0x09,
@@ -148,37 +146,83 @@ VK_CODE = {'backspace':0x08,
            ']':0xDD,
            "'":0xDE,
            '`':0xC0}
+
+rEarWts =[
+
+]
+
+lEarWts =[
+
+]
+
+
 def click(x,y):
     win32api.SetCursorPos((x,y))
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
+    
+def pressPhrase(phrase):
+    phraseList = []
+    for i in phrase:
+        if phrase[i] = ' ':
+            phraseList.append('spacebar')
+        else
+            phraseList.append(i)
+    print(phraseList)
+    
     
 def press(*args):
     '''
     one press, one release.
     accepts as many arguments as you want. e.g. press('left_arrow', 'a','b').
     '''
+    
     for i in args:
-        win32api.keybd_event(VK_CODE[i], 0,0,0)
+        win32api.keybd_event(VK_CODE[i],0,0,0)
         time.sleep(.05)
         win32api.keybd_event(VK_CODE[i],0 ,win32con.KEYEVENTF_KEYUP ,0)    
-    
-click(981,534)
-time.sleep(.5)
-click(867,529)
-time.sleep(.5)
-click(944,391)
-time.sleep(.5)
-press('d','tab','enter')
-time.sleep(.5)
-#click(101,84)
-click(321,390)
-time.sleep(.5)
-click(940,305)
-time.sleep(.5)
-press('l','a','b','d','a','t','a')
-time.sleep(.5)
-#enter pass
-click(651,447)
-time.sleep(.5)
-click(1093,672)
+
+#for i in range(0, 4):
+#    click(700,482)
+#    press(rEarWts[i][0],rEarWts[i][1],rEarWts[i][2],rEarWts[i][3],rEarWts[i][4],rEarWts[i][5])
+#    time.sleep(.1)
+#    win32api.keybd_event(0x0d, 0x1c ,0,0)
+#    time.sleep(.05)
+#    win32api.keybd_event(0x0d, 0x9c ,win32con.KEYEVENTF_KEYUP ,0)
+#    time.sleep(.1)
+#    press(lEarWts[i][0],lEarWts[i][1],lEarWts[i][2],lEarWts[i][3],lEarWts[i][4],lEarWts[i][5])
+#    time.sleep(.1)
+#    win32api.keybd_event(0x0d, 0x1c ,0,0)
+#    time.sleep(.05)
+#    win32api.keybd_event(0x0d, 0x9c ,win32con.KEYEVENTF_KEYUP ,0)
+#    time.sleep(.1)
+#    win32api.keybd_event(0x0d, 0x1c ,0,0)
+#    time.sleep(.05)
+#    win32api.keybd_event(0x0d, 0x9c ,win32con.KEYEVENTF_KEYUP ,0)
+#    time.sleep(.1)
+#    win32api.keybd_event(0x0d, 0x1c ,0,0)
+#    time.sleep(.05)
+#    win32api.keybd_event(0x0d, 0x9c ,win32con.KEYEVENTF_KEYUP ,0)
+#    time.sleep(1)
+#    
+        
+#    click(1104,526) # Click amend
+#    time.sleep(.2)
+#    click(998,530) # Click delete
+#    time.sleep(.2)
+#    click(944,388) # Click Standard Comments
+#    time.sleep(.2)
+#    press('d') #select comment
+#    time.sleep(.2) # Wait for user to press enter
+#    win32api.keybd_event(0x0d, 0x1c ,0,0)
+#    time.sleep(.05)
+#    win32api.keybd_event(0x0d, 0x9c ,win32con.KEYEVENTF_KEYUP ,0)
+#    click(945,312) # Click OK
+#    time.sleep(.2)
+#    press('l','a','b','d','a','t','a')
+#    time.sleep(.2)
+#    click(649,449) # click OK
+#    time.sleep(.2)
+#    click(1220,666) # click close
+#    time.sleep(.2)
+#    click(647,345)
