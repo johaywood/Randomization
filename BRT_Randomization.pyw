@@ -80,13 +80,13 @@ class Randomization(tk.Frame):
         ##Init
         
         anType = ''
-        if self.v == 1:
+        if self.v.get() == 1:
             anType = 'Rat'
         else:
             anType = 'Mouse'
         count = 0
         data = []
-        header = ["%s #" % anType, "Weight (g)"]
+        header = ['Row', '%s #' % anType, 'Weight (g)']
         endRow = self.totalAnimals.get() + 1
         wtNumFormat = 'General'
         
@@ -173,47 +173,49 @@ class Randomization(tk.Frame):
         
         ws.cell('A1').value = header[0]
         ws.cell('B1').value = header[1]
+        ws.cell('C1').value = header[2]
         ws.cell('A1').style = headerStyle
         ws.cell('B1').style = headerStyle
+        ws.cell('C1').style = headerStyle
         
         ##Rando sign-off box
         
-        ws.merge_cells('E3:F7')
+        ws.merge_cells('F3:G7')
         
-        for row in ws.iter_rows('E3:F7'):
+        for row in ws.iter_rows('F3:G7'):
             for cell in row: 
                 cell.style = headerStyle
                 
-        ws.cell('E3').value = 'Randomized using BRT Randomization v%s (Date/Initial) _________________' % version
-        ws.cell('E3').style = headerStyle
+        ws.cell('F3').value = 'Randomized using BRT Randomization v%s (Date/Initial) _________________' % version
+        ws.cell('F3').style = headerStyle
         
         ##Balance Info Box
         
-        ws.merge_cells('D10:G10')
-        ws.merge_cells('D11:E11')
-        ws.merge_cells('D12:E12')
-        ws.merge_cells('D13:E13')
-        ws.merge_cells('D14:E14')
-        ws.merge_cells('D15:E15')
-        ws.merge_cells('D16:E16')
-        ws.merge_cells('F11:G11')
-        ws.merge_cells('F12:G12')
-        ws.merge_cells('F13:G13')
-        ws.merge_cells('F14:G14')
-        ws.merge_cells('F15:G15')
-        ws.merge_cells('F16:G16')
+        ws.merge_cells('E10:H10')
+        ws.merge_cells('E11:F11')
+        ws.merge_cells('E12:F12')
+        ws.merge_cells('E13:F13')
+        ws.merge_cells('E14:F14')
+        ws.merge_cells('E15:F15')
+        ws.merge_cells('E16:F16')
+        ws.merge_cells('G11:H11')
+        ws.merge_cells('G12:H12')
+        ws.merge_cells('G13:H13')
+        ws.merge_cells('G14:H14')
+        ws.merge_cells('G15:H15')
+        ws.merge_cells('G16:H16')
         
-        for row in ws.iter_rows('D10:G16'):
+        for row in ws.iter_rows('E10:H16'):
             for cell in row: 
                 cell.style = headerStyle
         
-        ws.cell('D10').value = 'Balance Info'
-        ws.cell('D11').value = 'Balance Used'
-        ws.cell('D12').value = 'Serial Number'
-        ws.cell('D13').value = 'Calibrated'
-        ws.cell('D14').value = 'Verified Before'
-        ws.cell('D15').value = 'Verified After'
-        ws.cell('D16').value = 'Calibration Due'
+        ws.cell('E10').value = 'Balance Info'
+        ws.cell('E11').value = 'Balance Used'
+        ws.cell('E12').value = 'Serial Number'
+        ws.cell('E13').value = 'Calibrated'
+        ws.cell('E14').value = 'Verified Before'
+        ws.cell('E15').value = 'Verified After'
+        ws.cell('E16').value = 'Calibration Due'
 
 
         ##Write shuffled values to cells
@@ -221,18 +223,19 @@ class Randomization(tk.Frame):
         j = 0
         
         for i in range(2, self.totalAnimals.get() + 2):
-            ws.cell(row = i, column = 1).value = data[j]
+            ws.cell(row = i, column = 1).value = j + 1
+            ws.cell(row = i, column = 2).value = data[j]
             j = j + 1
         
-        wb.create_named_range('data', ws, 'A2:B%s' % str(j + 1))
+        wb.create_named_range('data', ws, 'B2:C%s' % str(j + 1))
         
         ##Set styling for randomized data table
         
-        for row in ws.iter_rows('A2:A%r' % endRow):
+        for row in ws.iter_rows('A2:B%r' % endRow):
             for cell in row: 
                 cell.style = numColumnStyle
         
-        for row in ws.iter_rows('B2:B%r' % endRow):
+        for row in ws.iter_rows('C2:C%r' % endRow):
             for cell in row: 
                 cell.style = wtColumnStyle
                 
@@ -257,12 +260,16 @@ class Randomization(tk.Frame):
         wspm.header = .5
         wspm.footer = .5
         
-        ws.cell('C1').value = ''
-        ws.column_dimensions['C'].width = 8
-        ws.column_dimensions['D'].width = 11
+        ws.cell('D1').value = ''
+        
+        ws.column_dimensions['A'].width = 6
+        ws.column_dimensions['B'].width = 12
+        ws.column_dimensions['C'].width = 12
+        ws.column_dimensions['D'].width = 8
         ws.column_dimensions['E'].width = 11
         ws.column_dimensions['F'].width = 11
         ws.column_dimensions['G'].width = 11
+        ws.column_dimensions['H'].width = 11
         
         ##Enable sheet protection and save the file
         
@@ -363,12 +370,12 @@ class Randomization(tk.Frame):
         
         wb = load_workbook(filename = file_path)
         file_path = file_path[:-5] + ' Outlier Check.xlsx'
-        wb.save(file_path)
+
         ws = wb.active
         wshf = ws.header_footer
         
-        anType = ws.cell('A1').value.split(' ')
-        anType = anType[1]
+        anType = ws.cell('B1').value.split(' ')
+        anType = anType[0]
         
         if anType == 'Rat':
             roundPlaces = 0
@@ -379,20 +386,24 @@ class Randomization(tk.Frame):
         split = data.split('$')               ##Create named range of data and get max row from that
         maxDataRow = split[4]
         
-        for row in ws.iter_rows('A2:A%s' % maxDataRow):
+        for row in ws.iter_rows('B2:B%s' % maxDataRow):
             for an in row:                                  ##Need to skip rows without weights
                 animalNums.append(an.value)
                 
-        for row in ws.iter_rows('B2:B%s' % maxDataRow):
+        for row in ws.iter_rows('C2:C%s' % maxDataRow):
             for wt in row:
                 animalWts.append(wt.value)
                     
         onlyWts = [x for x in animalWts if x != None]
         
+        if len(onlyWts) == 0:
+            win32api.MessageBox(0, 'No Weights Entered. Please enter rando weights.', '%s Outlier Check' % ws.title)
+            exit()
+        else:
+            wb.save(file_path)
+            
         dataDict = dict(zip(animalNums, animalWts))
         wtsFirstDict = dict(zip(animalWts, animalNums))
-        
-        print(ws.cell('B2').value)
         
         totAnimals = int(maxDataRow) - 1
         wtMean = round(numpy.mean(onlyWts), roundPlaces)
@@ -437,37 +448,37 @@ class Randomization(tk.Frame):
             outlierStatement = 'Animal numbers %s are weight outliers' % ', '.join(outlierAnNums)    
             
         
-        ws.unmerge_cells('E3:F7')
-        ws.unmerge_cells('D15:E15')
-        ws.unmerge_cells('D16:E16')
-        ws.unmerge_cells('F15:G15')
-        ws.unmerge_cells('F16:G16')
+        ws.unmerge_cells('F3:G7')
+        ws.unmerge_cells('E15:F15')
+        ws.unmerge_cells('E16:F16')
+        ws.unmerge_cells('G15:H15')
+        ws.unmerge_cells('G16:H16')
         
         wshf.left_header.text = ''
         wshf.center_header.text = str(ws.title) + '\rOutlier Check'
         wshf.right_header.text = ''
         
-        for row in ws.iter_rows('E3:F7'):
+        for row in ws.iter_rows('F3:G7'):
             for cell in row: 
                 cell.style = defaultStyle
                 
-        ws.cell('E3').value = ''
-        ws.cell('E3').style = defaultStyle
+        ws.cell('F3').value = ''
+        ws.cell('F3').style = defaultStyle
         
-        ws.cell('D10').value = 'Outlier Check   (%s)' %ocTypeString
-        ws.cell('D11').value = 'n: '
-        ws.cell('D12').value = 'Mean:'
-        ws.cell('D13').value = 'Std Dev:'
-        ws.cell('D14').value = 'Range:'
-        ws.cell('D15').value = outlierStatement
-        ws.cell('F11').value = totAnimals
-        ws.cell('F12').value = '%s g' % str(wtMean)
-        ws.cell('F13').value = '%s g' % str(wtStdev)
-        ws.cell('F14').value = '%s g --> %s g' % (str(lowrange), str(highrange))
+        ws.cell('E10').value = 'Outlier Check   (%s)' %ocTypeString
+        ws.cell('E11').value = 'n: '
+        ws.cell('E12').value = 'Mean:'
+        ws.cell('E13').value = 'Std Dev:'
+        ws.cell('E14').value = 'Range:'
+        ws.cell('E15').value = outlierStatement
+        ws.cell('G11').value = totAnimals
+        ws.cell('G12').value = '%s g' % str(wtMean)
+        ws.cell('G13').value = '%s g' % str(wtStdev)
+        ws.cell('G14').value = '%s g --> %s g' % (str(lowrange), str(highrange))
                 
-        ws.merge_cells('D15:G16')
+        ws.merge_cells('E15:H16')
         
-        for row in ws.iter_rows('D10:G16'):
+        for row in ws.iter_rows('E10:H16'):
             for cell in row: 
                 cell.style = headerStyle
                 
