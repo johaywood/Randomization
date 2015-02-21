@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 from tkinter.filedialog import askdirectory
-import xl, csv, random, time, win32com, win32api, math, statistics, numpy
+import random, win32com, win32api, numpy
 from openpyxl import Workbook
 from openpyxl import load_workbook
 from openpyxl.styles import Style, PatternFill, Border, Side, Alignment, Protection, Font, Color
